@@ -86,15 +86,22 @@ public class VetDataClient : IVetDataClient
         }, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<ClientRecord>> GetClientsAsync(ClientSearchParams searchParams, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ClientRecord>> GetClientsAsync(
+        Guid installationId,
+        ClientSearchParams searchParams,
+        CancellationToken cancellationToken = default)
     {
-        try
+        return await ExecuteWithRetryAsync(async (token) =>
         {
             var query = BuildODataQuery(searchParams);
-            var response = await _httpClient.GetAsync(
-                $"Clients{query}",
-                cancellationToken);
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get, $"v2/Clients{query}");
+            request.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            request.Headers.Add("Installation", installationId.ToString());
 
+            using var response = await _httpClient
+                .SendAsync(request, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content
@@ -102,12 +109,7 @@ public class VetDataClient : IVetDataClient
                     cancellationToken: cancellationToken);
 
             return result?.Value ?? Array.Empty<ClientRecord>();
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogError(ex, "Error retrieving clients");
-            throw new VetDataException("Failed to retrieve clients", ex);
-        }
+        }, cancellationToken);
     }
 
     private string BuildODataQuery(ClientSearchParams searchParams)

@@ -46,6 +46,7 @@ class VetDataConsoleApp
 {
     private readonly IVetDataClient _client;
     private readonly ILogger<VetDataConsoleApp> _logger;
+    private Guid _installationId;
 
     public VetDataConsoleApp(IVetDataClient client, ILogger<VetDataConsoleApp> logger)
     {
@@ -57,6 +58,26 @@ class VetDataConsoleApp
     {
         Console.WriteLine("VetData API Test Client");
         Console.WriteLine("======================");
+
+        Console.Write("\nEnter Installation ID (or press Enter to list installations first): ");
+        var installInput = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(installInput) && Guid.TryParse(installInput, out var parsedId))
+        {
+            _installationId = parsedId;
+        }
+        else
+        {
+            await ListInstallationsAsync();
+            Console.Write("\nEnter Installation ID to use: ");
+            var id = Console.ReadLine();
+            if (!Guid.TryParse(id, out _installationId))
+            {
+                Console.WriteLine("Invalid Installation ID.");
+                return;
+            }
+        }
+
+        Console.WriteLine($"Using Installation: {_installationId}");
 
         while (true)
         {
@@ -127,7 +148,7 @@ class VetDataConsoleApp
         };
 
         Console.WriteLine("\nSearching clients...");
-        var clients = await _client.GetClientsAsync(searchParams);
+        var clients = await _client.GetClientsAsync(_installationId, searchParams);
 
         DisplayClients(clients);
     }
@@ -164,7 +185,7 @@ class VetDataConsoleApp
         };
 
         Console.WriteLine("\nSearching clients...");
-        var clients = await _client.GetClientsAsync(searchParams);
+        var clients = await _client.GetClientsAsync(_installationId, searchParams);
 
         DisplayClients(clients);
     }
@@ -188,7 +209,7 @@ class VetDataConsoleApp
         };
 
         Console.WriteLine("\nSearching clients...");
-        var clients = await _client.GetClientsAsync(searchParams);
+        var clients = await _client.GetClientsAsync(_installationId, searchParams);
 
         DisplayClients(clients);
     }
@@ -212,7 +233,7 @@ class VetDataConsoleApp
         };
 
         Console.WriteLine("\nRetrieving client details...");
-        var clients = await _client.GetClientsAsync(searchParams);
+        var clients = await _client.GetClientsAsync(_installationId, searchParams);
 
         DisplayClients(clients, detailed: true);
     }
@@ -231,7 +252,7 @@ class VetDataConsoleApp
                 Console.WriteLine("  Phone Numbers:");
                 foreach (var phone in client.Phones)
                 {
-                    Console.WriteLine($"    {phone.PhoneType}: {phone.PhoneNumber}");
+                    Console.WriteLine($"    {phone.Type}: {phone.Number}");
                 }
             }
 
