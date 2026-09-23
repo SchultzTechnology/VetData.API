@@ -1,0 +1,1007 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Covetrus Connect — Standard Data API</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.5;
+        color: #233044;
+        background: #f5f7fa;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      a {
+        color: #1265a8;
+      }
+
+      code,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+
+      code {
+        overflow-wrap: anywhere;
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 0;
+        padding: 1rem;
+        border-radius: 0.4rem;
+        background: #172336;
+        color: #e8f0fa;
+        font-size: 0.86rem;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.25;
+      }
+
+      h1 {
+        margin: 0.3rem 0;
+        font-size: clamp(1.8rem, 4vw, 2.7rem);
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
+      h3 {
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin-top: 0.5rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+      }
+
+      th,
+      td {
+        padding: 0.7rem;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f5f8fc;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 245px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 1.5rem 1rem;
+        background: #172336;
+        color: #e8f0fa;
+      }
+
+      .sidebar strong {
+        display: block;
+        margin-bottom: 1.4rem;
+        font-size: 1.1rem;
+      }
+
+      .sidebar a {
+        display: block;
+        padding: 0.55rem 0.7rem;
+        border-radius: 0.35rem;
+        color: #d7e5f6;
+        text-decoration: none;
+      }
+
+      .sidebar a:hover,
+      .sidebar a:focus-visible {
+        background: #293b54;
+      }
+
+      main {
+        width: min(100%, 1160px);
+        padding: 2rem clamp(1rem, 4vw, 3rem) 5rem;
+      }
+
+      section {
+        scroll-margin-top: 1.5rem;
+      }
+
+      .hero,
+      .card,
+      .operation {
+        margin-bottom: 1.3rem;
+        padding: 1.4rem;
+        border: 1px solid #dbe3ed;
+        border-radius: 0.65rem;
+        background: white;
+        box-shadow: 0 2px 9px rgb(25 45 70 / 4%);
+      }
+
+      .hero {
+        border-top: 5px solid #238555;
+      }
+
+      .muted {
+        color: #617187;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin: 1rem 0;
+      }
+
+      .badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: #e9f2fa;
+        color: #18517c;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .notice {
+        margin: 1rem 0;
+        padding: 0.85rem 1rem;
+        border-left: 4px solid #db9b24;
+        border-radius: 0.25rem;
+        background: #fff7e7;
+      }
+
+      .success {
+        border-left-color: #238555;
+        background: #ebf8f0;
+      }
+
+      .operation {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .operation > header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #dbe3ed;
+        background: #eff8f3;
+      }
+
+      .operation-body {
+        padding: 0.4rem 1.25rem 1.3rem;
+      }
+
+      .method {
+        min-width: 4rem;
+        padding: 0.3rem 0.55rem;
+        border-radius: 0.3rem;
+        background: #238555;
+        color: white;
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .method.post {
+        background: #ad7422;
+      }
+
+      .path {
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+
+      .summary {
+        color: #52647a;
+      }
+
+      .code-title {
+        margin: 1.1rem 0 0.4rem;
+        font-weight: 700;
+      }
+
+      .code-tools {
+        position: relative;
+      }
+
+      .copy {
+        position: absolute;
+        top: 0.55rem;
+        right: 0.55rem;
+        padding: 0.3rem 0.5rem;
+        border: 1px solid #8295ad;
+        border-radius: 0.3rem;
+        background: #263b55;
+        color: white;
+        cursor: pointer;
+      }
+
+      .copy:hover,
+      .copy:focus-visible {
+        background: #365473;
+      }
+
+      .anchor-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+
+      .anchor-list a {
+        padding: 0.5rem 0.7rem;
+        border-radius: 0.35rem;
+        background: #e9f2fa;
+        text-decoration: none;
+      }
+
+      footer {
+        color: #617187;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 760px) {
+        .layout {
+          display: block;
+        }
+
+        .sidebar {
+          position: static;
+          height: auto;
+        }
+
+        main {
+          padding-top: 1rem;
+        }
+
+        .operation > header {
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="sidebar" aria-label="API reference navigation">
+        <strong>Covetrus Connect<br />Standard Data API</strong>
+        <a href="#overview">Overview</a>
+        <a href="#quick-start">Quick start</a>
+        <a href="#authentication">Authentication</a>
+        <a href="#request-conventions">Request conventions</a>
+        <a href="#endpoints">Endpoints</a>
+        <a href="#token">POST Obtain token</a>
+        <a href="#installations">GET InstallationList</a>
+        <a href="#metadata">GET Metadata</a>
+        <a href="#entity-collection">GET Entity collection</a>
+        <a href="#schema">Example entity schemas</a>
+        <a href="#sync">Incremental sync</a>
+        <a href="#errors">Errors and operations</a>
+        <a href="#sources">Sources and scope</a>
+      </nav>
+
+      <main>
+        <section class="hero" id="overview">
+          <div class="muted">API REFERENCE · CONSOLIDATED GUIDE</div>
+          <h1>Standard Data API</h1>
+          <p>
+            Read Covetrus Connect Marketplace data through a RESTful
+            <strong>OData v3</strong> API. Authenticate with a CIAM OAuth 2.0
+            access token, identify the practice with an
+            <code>Installation</code> request header, and query entity
+            collections beneath <code>https://api.vetdata.net/v2</code>.
+          </p>
+          <div class="badges">
+            <span class="badge">OData v3</span>
+            <span class="badge">Bearer token</span>
+            <span class="badge">Practice-scoped reads</span>
+            <span class="badge">JSON or ATOM</span>
+          </div>
+          <div class="notice">
+            <strong>Scope:</strong> This page documents the
+            <em>Standard Data API</em>, not the separate Data Delivery or
+            Writeback services. It is a human-readable reference, not a
+            machine-readable OpenAPI specification.
+          </div>
+        </section>
+
+        <section class="card" id="quick-start">
+          <h2>Quick start</h2>
+          <ol>
+            <li>
+              Obtain your <strong>CIAM username and password</strong>. These
+              differ from Basic Auth credentials; contact
+              <a href="mailto:techops@vetdata.com">techops@vetdata.com</a>
+              if needed.
+            </li>
+            <li>
+              <a href="#token">POST to the CIAM token endpoint</a>. Save the
+              response’s <code>access_token</code> and
+              <code>expires_in</code>.
+            </li>
+            <li>
+              Determine the practice’s installation ID using
+              <a href="#installations">InstallationList</a> and your
+              integration’s practice-mapping process.
+            </li>
+            <li>
+              Call an entity collection with
+              <code>Authorization: Bearer …</code>,
+              <code>Installation: …</code>, and the desired
+              <code>Accept</code> header.
+            </li>
+            <li>
+              Reuse the token until shortly before expiration. Page and
+              filter entity requests as appropriate for your integration.
+            </li>
+          </ol>
+          <div class="anchor-list">
+            <a href="#token">1 · Token</a>
+            <a href="#installations">2 · Installation</a>
+            <a href="#entity-collection">3 · Read data</a>
+          </div>
+        </section>
+
+        <section class="card" id="authentication">
+          <h2>Authentication</h2>
+          <p>
+            OAuth 2.0 authentication is required for the Standard Data API.
+            The documented CIAM flow exchanges a CIAM username and password
+            for an access token.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Setting</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Token URL</td>
+                  <td><code>https://auth.covetrus.com/oauth/token</code></td>
+                </tr>
+                <tr>
+                  <td>Grant type</td>
+                  <td>
+                    <code>
+                      http://auth0.com/oauth/grant-type/password-realm
+                    </code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Token request body</td>
+                  <td><code>application/x-www-form-urlencoded</code></td>
+                </tr>
+                <tr>
+                  <td>API authorization</td>
+                  <td><code>Authorization: Bearer ACCESS_TOKEN</code></td>
+                </tr>
+                <tr>
+                  <td>Expiration</td>
+                  <td>
+                    Use the response’s <code>expires_in</code>, in seconds.
+                    There is no documented refresh-token mechanism; request
+                    a new access token when needed.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The published <code>client_id</code>, <code>audience</code>,
+            <code>realm</code>, <code>grant_type</code>, and
+            <code>covetrus_product_code</code> values are not treated as
+            secrets by Covetrus. Protect your CIAM username, password, and
+            issued access token.
+          </p>
+        </section>
+
+        <section class="card" id="request-conventions">
+          <h2>Request conventions</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Header</th>
+                  <th>Value</th>
+                  <th>When used</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>Authorization</code></td>
+                  <td><code>Bearer ACCESS_TOKEN</code></td>
+                  <td>Authenticated API calls</td>
+                </tr>
+                <tr>
+                  <td><code>Installation</code></td>
+                  <td>Practice installation GUID</td>
+                  <td>Data requests beneath <code>/v2</code></td>
+                </tr>
+                <tr>
+                  <td><code>Accept</code></td>
+                  <td><code>application/json</code></td>
+                  <td>JSON light</td>
+                </tr>
+                <tr>
+                  <td><code>Accept</code></td>
+                  <td><code>application/json;odata=verbose</code></td>
+                  <td>JSON Standard / verbose</td>
+                </tr>
+                <tr>
+                  <td><code>Accept</code></td>
+                  <td><code>application/atom+xml</code></td>
+                  <td>ATOM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="notice">
+            <strong>Metadata exception:</strong> Do not send
+            <code>Accept: application/json</code> when requesting
+            <code>/v2/$metadata</code>. The source documentation does not
+            specify a required alternative Accept value.
+          </div>
+          <p>
+            Entity names and their fields are defined by the separate Data
+            Schema documentation and the API metadata. Query examples below
+            illustrate OData v3 usage; confirm supported query behavior and
+            response shapes for the entity you are integrating.
+          </p>
+        </section>
+
+        <section id="endpoints">
+          <h2>Endpoints</h2>
+
+          <article class="operation" id="token">
+            <header>
+              <span class="method post">POST</span>
+              <span class="path">
+                https://auth.covetrus.com/oauth/token
+              </span>
+              <span class="summary">Obtain a CIAM access token</span>
+            </header>
+            <div class="operation-body">
+              <p>
+                Send form-encoded credentials. The response contains an
+                <code>access_token</code> and <code>expires_in</code>, among
+                other fields.
+              </p>
+              <p class="code-title">Required headers</p>
+              <div class="code-tools">
+                <button class="copy" type="button">Copy</button>
+                <pre><code>Accept: application/json
+Content-Type: application/x-www-form-urlencoded</code></pre>
+              </div>
+              <p class="code-title">Required form fields</p>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Field</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>grant_type</code></td>
+                      <td>
+                        <code>
+                          http://auth0.com/oauth/grant-type/password-realm
+                        </code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>client_id</code></td>
+                      <td>
+                        <code>p9vvyF08lLYNzAfcDiWuLJf4mWGdGm2M</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>audience</code></td>
+                      <td><code>https://vetdata.net</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>username</code></td>
+                      <td>Your CIAM username</td>
+                    </tr>
+                    <tr>
+                      <td><code>password</code></td>
+                      <td>Your CIAM password</td>
+                    </tr>
+                    <tr>
+                      <td><code>realm</code></td>
+                      <td><code>PartnersDB</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>covetrus_product_code</code></td>
+                      <td><code>Vetdata</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="code-title">cURL example</p>
+              <div class="code-tools">
+                <button class="copy" type="button">Copy</button>
+                <pre><code>curl --request POST "https://auth.covetrus.com/oauth/token" \
+  --header "Accept: application/json" \
+  --header "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode \
+    "grant_type=http://auth0.com/oauth/grant-type/password-realm" \
+  --data-urlencode "client_id=p9vvyF08lLYNzAfcDiWuLJf4mWGdGm2M" \
+  --data-urlencode "audience=https://vetdata.net" \
+  --data-urlencode "username=${CIAM_USERNAME}" \
+  --data-urlencode "password=${CIAM_PASSWORD}" \
+  --data-urlencode "realm=PartnersDB" \
+  --data-urlencode "covetrus_product_code=Vetdata"</code></pre>
+              </div>
+              <p class="muted">
+                Set <code>CIAM_USERNAME</code> and
+                <code>CIAM_PASSWORD</code> in your shell before running.
+                Avoid storing credentials in checked-in files or shell
+                history.
+              </p>
+            </div>
+          </article>
+
+          <article class="operation" id="installations">
+            <header>
+              <span class="method">GET</span>
+              <span class="path">
+                https://api.vetdata.net/InstallationList
+              </span>
+              <span class="summary">List installations</span>
+            </header>
+            <div class="operation-body">
+              <p>
+                Returns a list of installations. This endpoint is separate
+                from the practice-scoped <code>/v2</code> entity collections.
+              </p>
+              <p class="code-title">Example</p>
+              <div class="code-tools">
+                <button class="copy" type="button">Copy</button>
+                <pre><code>curl "https://api.vetdata.net/InstallationList" \
+  --header "Authorization: Bearer ${ACCESS_TOKEN}" \
+  --header "Accept: application/json"</code></pre>
+              </div>
+              <div class="notice">
+                The supplied endpoint description does not spell out
+                InstallationList-specific header requirements or its
+                response schema. This example uses the documented bearer
+                scheme for Standard Data API access; verify any additional
+                requirements with Covetrus.
+              </div>
+            </div>
+          </article>
+
+          <article class="operation" id="metadata">
+            <header>
+              <span class="method">GET</span>
+              <span class="path">
+                https://api.vetdata.net/v2/$metadata
+              </span>
+              <span class="summary">Retrieve API metadata and schema</span>
+            </header>
+            <div class="operation-body">
+              <p>
+                Inspect entity types and schema information. Do not set
+                <code>Accept: application/json</code> on this request.
+              </p>
+              <p class="code-title">Example</p>
+              <div class="code-tools">
+                <button class="copy" type="button">Copy</button>
+                <pre><code>curl 'https://api.vetdata.net/v2/$metadata' \
+  --header "Authorization: Bearer ${ACCESS_TOKEN}"</code></pre>
+              </div>
+              <p class="muted">
+                The supplied overview does not specify whether the metadata
+                endpoint requires an <code>Installation</code> header. Add
+                one if required in your environment; do not assume metadata
+                uses the same response format as entity data.
+              </p>
+            </div>
+          </article>
+
+          <article class="operation" id="entity-collection">
+            <header>
+              <span class="method">GET</span>
+              <span class="path">
+                https://api.vetdata.net/v2/{EntityName}
+              </span>
+              <span class="summary">Read practice-scoped entity data</span>
+            </header>
+            <div class="operation-body">
+              <p>
+                Substitute a defined entity collection, such as
+                <code>Addresses</code>, <code>Phones</code>, or
+                <code>ClientPatientRelationships</code>. Supply the
+                practice’s installation GUID in the
+                <code>Installation</code> header.
+              </p>
+              <p class="code-title">Required request headers</p>
+              <div class="code-tools">
+                <button class="copy" type="button">Copy</button>
+                <pre><code>Installation: YOUR_INSTALLATION_GUID
+Accept: application/json
+Authorization: Bearer YOUR_ACCESS_TOKEN</code></pre>
+              </div>
+              <p class="code-title">Example: first 100 addresses</p>
+              <div class="code-tools">
+                <button class="copy" type="button">Copy</button>
+                <pre><code>curl 'https://api.vetdata.net/v2/Addresses?$top=100' \
+  --header "Installation: ${INSTALLATION_ID}" \
+  --header "Accept: application/json" \
+  --header "Authorization: Bearer ${ACCESS_TOKEN}"</code></pre>
+              </div>
+              <p>
+                The Standard Data API supports filtering, entity expansion,
+                pagination, and diffing using API metadata datetime fields.
+                OData query options use names such as
+                <code>$top</code>, <code>$filter</code>, and
+                <code>$expand</code>; consult the API metadata and
+                entity-specific documentation before relying on a particular
+                query or navigation property.
+              </p>
+              <div class="notice">
+                <strong>Do not confuse API variants:</strong> Standard Data
+                API results represent present-state data. The separate Data
+                Delivery API focuses on bulk ETL and transaction-log IDs;
+                its query and historical-data behavior does not apply here.
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="card" id="schema">
+          <h2>Example entity schemas</h2>
+          <p>
+            These fields come from the supplied entity pages. A
+            <code>?</code> denotes a nullable field as shown there. Consult
+            <code>/v2/$metadata</code> and the complete Data Schema Guide
+            for other entities and relationships.
+          </p>
+
+          <h3>ClientPatientRelationships</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ID</code></td>
+                  <td>string</td>
+                  <td>Unique record ID</td>
+                </tr>
+                <tr>
+                  <td><code>Type</code></td>
+                  <td>string?</td>
+                  <td>
+                    Relationship type; configurable within each PIMS and
+                    not standardized
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>ClientId</code></td>
+                  <td>string</td>
+                  <td><code>Clients.Id</code></td>
+                </tr>
+                <tr>
+                  <td><code>ClientPmsId</code></td>
+                  <td>string</td>
+                  <td><code>Clients.PmsId</code></td>
+                </tr>
+                <tr>
+                  <td><code>PatientId</code></td>
+                  <td>string</td>
+                  <td><code>Patients.Id</code></td>
+                </tr>
+                <tr>
+                  <td><code>PatientPmsId</code></td>
+                  <td>string</td>
+                  <td><code>Patients.PmsId</code></td>
+                </tr>
+                <tr>
+                  <td><code>IsPrimary</code></td>
+                  <td>bool?</td>
+                  <td>Whether this is the primary owner</td>
+                </tr>
+                <tr>
+                  <td><code>Percentage</code></td>
+                  <td>double?</td>
+                  <td>Ownership percentage</td>
+                </tr>
+                <tr>
+                  <td><code>StartDate</code></td>
+                  <td>datetime?</td>
+                  <td>Relationship start date</td>
+                </tr>
+                <tr>
+                  <td><code>EndDate</code></td>
+                  <td>datetime?</td>
+                  <td>Relationship end date</td>
+                </tr>
+                <tr>
+                  <td><code>APICreateDate</code></td>
+                  <td>datetime</td>
+                  <td>First appearance in the API</td>
+                </tr>
+                <tr>
+                  <td><code>APILastChangeDate</code></td>
+                  <td>datetime?</td>
+                  <td>Last API alteration</td>
+                </tr>
+                <tr>
+                  <td><code>APIRemovedDate</code></td>
+                  <td>datetime?</td>
+                  <td>Removal date recorded by the API</td>
+                </tr>
+                <tr>
+                  <td><code>InstallationId</code></td>
+                  <td>guid</td>
+                  <td>Practice installation ID</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="notice">
+            <strong>Ownership interpretation:</strong> Treat an
+            <code>EndDate</code> of today or earlier as ended. If no single
+            <code>IsPrimary</code> value identifies the primary owner,
+            consider the largest <code>Percentage</code>. PIMS data may
+            contain missing primary flags, multiple primary flags, or
+            percentages that do not total 100; equal percentages can
+            indicate shared ownership.
+          </div>
+
+          <h3>Phones</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Field</th>
+                  <th>Type</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ID</code></td>
+                  <td>string</td>
+                  <td>Unique record ID</td>
+                </tr>
+                <tr>
+                  <td><code>Type</code></td>
+                  <td>string?</td>
+                  <td>
+                    Phone type; configurable within each PIMS and not
+                    standardized
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>IsPrimary</code></td>
+                  <td>bool?</td>
+                  <td>Whether this is the primary contact number</td>
+                </tr>
+                <tr>
+                  <td><code>Number</code></td>
+                  <td>string</td>
+                  <td>Phone value from the PIMS</td>
+                </tr>
+                <tr>
+                  <td><code>RelationshipId</code></td>
+                  <td>string</td>
+                  <td>Related entity’s API ID</td>
+                </tr>
+                <tr>
+                  <td><code>RelationshipPmsId</code></td>
+                  <td>string?</td>
+                  <td>Related entity’s PIMS ID</td>
+                </tr>
+                <tr>
+                  <td><code>RelationshipEntity</code></td>
+                  <td>string</td>
+                  <td>Related entity type, such as Client or Resource</td>
+                </tr>
+                <tr>
+                  <td><code>APICreateDate</code></td>
+                  <td>datetime</td>
+                  <td>First appearance in the API</td>
+                </tr>
+                <tr>
+                  <td><code>APILastChangeDate</code></td>
+                  <td>datetime?</td>
+                  <td>Last API alteration</td>
+                </tr>
+                <tr>
+                  <td><code>APIRemovedDate</code></td>
+                  <td>datetime?</td>
+                  <td>Removal date recorded by the API</td>
+                </tr>
+                <tr>
+                  <td><code>InstallationId</code></td>
+                  <td>guid</td>
+                  <td>Practice installation ID</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card" id="sync">
+          <h2>Incremental sync guidance</h2>
+          <p>
+            The Standard Data API documentation describes diffing with API
+            metadata datetime fields and pagination. The example entities
+            expose <code>APICreateDate</code>,
+            <code>APILastChangeDate</code>, and
+            <code>APIRemovedDate</code>.
+          </p>
+          <ol>
+            <li>Perform an initial, paginated load for each needed entity.</li>
+            <li>
+              Track a successful sync checkpoint for each installation and
+              entity.
+            </li>
+            <li>
+              Query relevant API datetime fields for subsequent changes,
+              using the supported OData filters for that entity.
+            </li>
+            <li>
+              Account for nullable change and removal fields; avoid relying
+              on <code>APILastChangeDate</code> alone to discover every new
+              record.
+            </li>
+            <li>
+              Confirm removal visibility, filter syntax, pagination
+              behavior, and checkpoint boundaries before using the results
+              for deletion or reconciliation.
+            </li>
+          </ol>
+          <div class="notice">
+            The supplied pages do not provide a complete, guaranteed delta
+            query or deletion contract. In particular, a field named
+            <code>APIRemovedDate</code> does not by itself establish when
+            removed rows remain queryable. Validate this behavior before
+            implementing production sync.
+          </div>
+        </section>
+
+        <section class="card" id="errors">
+          <h2>Errors and operational notes</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Situation</th>
+                  <th>Recommended response</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Expired token; API returns <code>401</code></td>
+                  <td>
+                    Obtain a new token and retry as appropriate. Refresh a
+                    few minutes before the documented expiry.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Token acquisition fails</td>
+                  <td>
+                    Check CIAM credentials and request fields; contact
+                    Vetdata support if authentication still fails.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Many calls in a short period</td>
+                  <td>
+                    Cache and reuse the access token. Do not request a new
+                    token for every API call.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Highly parallel requests</td>
+                  <td>
+                    Check outbound connection limits and queues. A request
+                    delayed before reaching the API may encounter token
+                    expiry.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The CIAM guidance notes Auth0 login throttling, including limits
+            after repeated incorrect passwords or frequent login attempts.
+            Avoid aggressive token-request retries.
+          </p>
+          <div class="notice success">
+            A long-running API request can finish after token expiry if the
+            service receives and processes its token before it expires.
+            Refreshing shortly before expiry still reduces race conditions.
+          </div>
+        </section>
+
+        <section class="card" id="sources">
+          <h2>Sources and scope</h2>
+          <p>
+            Consolidated from the supplied Covetrus support pages:
+            <em>Standard Data API Overview</em> (Apr 29, 2024),
+            <em>OAuth 2.0 for Covetrus Connect APIs</em> (Mar 6, 2025),
+            <em>API Technical Documentation Guide</em> (Sep 16, 2021),
+            <em>ClientPatientRelationships</em> (Jun 10, 2021), and
+            <em>Phones</em> (Jun 16, 2021).
+          </p>
+          <p class="muted">
+            Endpoint-specific response examples, a complete entity catalog,
+            and a formal OpenAPI contract were not included in those
+            materials. This page intentionally does not invent them.
+          </p>
+        </section>
+
+        <footer>
+          Documentation reference based on supplied Covetrus materials.
+          Verify behavior against your current integration and official
+          support documentation.
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      document.querySelectorAll(".copy").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const code = button.parentElement.querySelector("code");
+          const originalLabel = button.textContent;
+
+          try {
+            await navigator.clipboard.writeText(code.textContent);
+            button.textContent = "Copied";
+          } catch {
+            button.textContent = "Copy unavailable";
+          }
+
+          window.setTimeout(() => {
+            button.textContent = originalLabel;
+          }, 1800);
+        });
+      });
+    </script>
+  </body>
+</html>
